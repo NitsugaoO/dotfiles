@@ -19,7 +19,7 @@ yasb 的布局与自定义 widget。配色由 `everforest-themes` 生成，**本
 ## 部署
 
 ```powershell
-cd %USERPROFILE%\Projects\windows-everforest-rice
+cd %USERPROFILE%\Projects\dotfiles
 .\sync-dotfiles.ps1
 ```
 
@@ -70,7 +70,7 @@ yasb 用 cx_Freeze 打包，`core.*` 全在 `lib/library.zip` 里，而 `WidgetB
 `core.widgets.*` 导入 widget，所以补丁必须写进这个 zip：
 
 ```powershell
-python %USERPROFILE%\Projects\windows-everforest-rice\yasb\patches\install_patches.py
+python %USERPROFILE%\Projects\dotfiles\yasb\patches\install_patches.py
 python ...\install_patches.py --check      # 只查状态
 python ...\install_patches.py --restore    # 还原原始 zip
 python ...\install_patches.py --clean      # 去除重复条目（需先退出 yasb）

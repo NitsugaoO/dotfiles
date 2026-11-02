@@ -1,4 +1,4 @@
-# windows-everforest-rice
+# dotfiles
 
 一套 **Everforest Hard（高对比暗色）** 风格的 Windows 桌面 + 编辑器配置合集：
 GlazeWM / yasb / Windhawk / Everything / Edge / VSCode / Neovim / pi / Clash Party。
@@ -66,7 +66,7 @@ Windhawk / Everything / Edge / pi 的装法见各自目录（有的是粘贴一�
 | 写法 | 出现位置 | 为什么要改 |
 |---|---|---|
 | `C:/Users/<YourName>/scoop/...` | `windows/yasb/config.yaml` 里 obs 组件的 5 行 | yasb 这几行是 `use_shell: false`，**不经过 shell，`~` 和 `%USERPROFILE%` 都不会展开**，只能写绝对路径 |
-| `%USERPROFILE%\Projects\windows-everforest-rice` | 注册表 `.reg`、nvim 的 junction 命令 | 假定仓库 clone 到这个位置；放别处就要改 |
+| `%USERPROFILE%\Projects\dotfiles` | 注册表 `.reg`、nvim 的 junction 命令 | 假定仓库 clone 到这个位置；放别处就要改 |
 | `DOMAIN\Username` / `S-1-5-21-...` | `system-tweaks/tweaks/glazewm-startup/GlazeWM-task.xml` | 计划任务定义里的账号占位，导入前换成自己的 |
 
 `.reg` / `.xml` 是 **UTF-16LE** 编码，用编辑器改的时候注意别存成 UTF-8，否则 `reg import` 会报错。

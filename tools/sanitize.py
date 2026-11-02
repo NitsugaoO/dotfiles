@@ -13,7 +13,7 @@ from __future__ import annotations
 import pathlib
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-REPO = r"%USERPROFILE%\Projects\windows-everforest-rice"
+REPO = r"%USERPROFILE%\Projects\dotfiles"
 
 # ---------------------------------------------------------------- 通用替换表
 # 纯字面替换，**先长后短**（短规则会吃掉长规则的前缀）
@@ -85,7 +85,7 @@ def rewrite_reg(path: pathlib.Path) -> None:
         + r"; Run Pi Here —— 在文件夹 / 驱动器右键菜单里打开 pi（PowerShell 7 / pwsh）" + "\r\n"
         + r'; 命令: wt.exe -d "%V" pwsh -NoExit -Command "pi"（要求 wt.exe 在 PATH 里）' + "\r\n"
         + r"; Icon 用 REG_EXPAND_SZ（hex(2)）存 %USERPROFILE%，换机器也能展开：" + "\r\n"
-        + r";   仓库需 clone 到 %USERPROFILE%\Projects\windows-everforest-rice" + "\r\n"
+        + r";   仓库需 clone 到 %USERPROFILE%\Projects\dotfiles" + "\r\n"
         + r";   路径不同就改 hex(2) 里的字符串后重新导入，或用 reg add 直接写" + "\r\n"
     )
     blocks = []

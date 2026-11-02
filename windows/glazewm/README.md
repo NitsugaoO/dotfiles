@@ -11,7 +11,7 @@ GlazeWM 平铺窗口管理器的**权威配置**：工作区、快捷键、windo
 GlazeWM **没有 `--config` 参数**（配置路径硬编码在 `~\.glzr\glazewm\`），所以必须拷贝：
 
 ```powershell
-cd %USERPROFILE%\Projects\windows-everforest-rice
+cd %USERPROFILE%\Projects\dotfiles
 .\sync-dotfiles.ps1
 ```
 

@@ -12,7 +12,7 @@
 
 **⚠️ 迁移的副作用（已修复）**：`context-menu` 的图标路径是**写死在注册表里**的绝对路径，
 迁移后三处 `RunPiHere` 的 `Icon` 值全部失效（指向旧的 `my-plugins` 路径）。
-已更新为 `%USERPROFILE%\Projects\windows-everforest-rice\system-tweaks\...`，`.reg` 文件同步修正。
+已更新为 `%USERPROFILE%\Projects\dotfiles\system-tweaks\...`，`.reg` 文件同步修正。
 
 > 💡 **教训**：注册表值里的绝对路径是**移动仓库时最容易踩的雷**。
 > 迁移任何被注册表引用的目录后，务必回查 `Icon`、`command` 之类的值。

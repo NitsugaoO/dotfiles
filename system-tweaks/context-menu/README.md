@@ -43,7 +43,7 @@ HKCU\Software\Classes\Drive\shell\RunPiHere                   ← 驱动器上
 本机实际写入的值：
 
 ```
-Icon    = %USERPROFILE%\Projects\windows-everforest-rice\system-tweaks\context-menu\run-pi-here.ico
+Icon    = %USERPROFILE%\Projects\dotfiles\system-tweaks\context-menu\run-pi-here.ico
 Command = "wt.exe" -d "%V" pwsh -NoExit -Command "pi"
 ```
 
@@ -78,7 +78,7 @@ Remove-Item -Recurse 'HKCU:\Software\Classes\Drive\shell\RunPiHere'
 
 | 原值 | 可移植写法 |
 |---|---|
-| `%USERPROFILE%\Projects\windows-everforest-rice\system-tweaks\...\run-pi-here.ico` | `%USERPROFILE%\Projects\system-tweaks\...\run-pi-here.ico`（需 `REG_EXPAND_SZ` 类型才会展开） |
+| `%USERPROFILE%\Projects\dotfiles\system-tweaks\...\run-pi-here.ico` | `%USERPROFILE%\Projects\system-tweaks\...\run-pi-here.ico`（需 `REG_EXPAND_SZ` 类型才会展开） |
 | `wt.exe` | 若 `wt.exe` 已在 PATH，可直接写 `wt.exe` |
 
 > 上方「当前状态」保留的是本机**实际写入**的绝对路径，便于排查时对照。

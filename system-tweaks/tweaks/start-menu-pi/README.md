@@ -57,14 +57,14 @@ Target / Arguments / Icon 与上表一致）
 Pi.lnk  → %APPDATA%\Roaming\Microsoft\Windows\Start Menu\Programs\Pi.lnk
 Target  = wt.exe
 Args    = -d "C:\Users\<YourName>" pwsh -NoExit -Command "pi"
-Icon    = %USERPROFILE%\Projects\windows-everforest-rice\system-tweaks\context-menu\run-pi-here.ico,0
+Icon    = %USERPROFILE%\Projects\dotfiles\system-tweaks\context-menu\run-pi-here.ico,0
 ```
 
 ## 安装 / 重建
 
 ```powershell
 # 创建（可重复执行，覆盖已有的 Pi.lnk）
-cd %USERPROFILE%\Projects\windows-everforest-rice\system-tweaks\tweaks\start-menu-pi
+cd %USERPROFILE%\Projects\dotfiles\system-tweaks\tweaks\start-menu-pi
 .\add-start-menu-pi.ps1
 
 # 预演（不落盘）

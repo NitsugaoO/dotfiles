@@ -246,7 +246,7 @@ Get-Process glazewm,yasb,steam,msedge,explorer -EA SilentlyContinue |
 # 1. 删除计划任务
 Unregister-ScheduledTask -TaskName GlazeWM -Confirm:$false
 # 2. 恢复 Run 键项
-reg import "%USERPROFILE%\Projects\windows-everforest-rice\system-tweaks\tweaks\glazewm-startup\HKCU-Run-20260913-005910.reg"
+reg import "%USERPROFILE%\Projects\dotfiles\system-tweaks\tweaks\glazewm-startup\HKCU-Run-20260913-005910.reg"
 # 3. 删包装脚本（可选）
 Remove-Item "%USERPROFILE%\.glzr\launch-glazewm.vbs"
 ```

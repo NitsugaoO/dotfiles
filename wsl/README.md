@@ -12,7 +12,7 @@
 ## 部署
 
 ```powershell
-cd %USERPROFILE%\Projects\windows-everforest-rice
+cd %USERPROFILE%\Projects\dotfiles
 .\sync-dotfiles.ps1            # 部署（-WhatIf 可预演）
 ```
 
