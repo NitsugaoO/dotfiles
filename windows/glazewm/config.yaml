@@ -3,6 +3,57 @@
 #  修改后按 Alt+Shift+R 即可热重载,无需重启
 # ============================================================
 
+animations:
+  # 窗口纯位移（位置变化）—— 保留
+  window_move:
+    enabled: true
+    duration_ms: 150
+    easing: "cubic_bezier(0.2, 0.0, 0.0, 1.0)"
+    threshold_px: 10
+  # 尺寸变化 —— 关闭。注意：布局重排（插入/关闭/移动跨 split）常同时改变位置和尺寸，
+  # 只开 window_move 会出现“位移渐变、尺寸瞬变”的撞裂感；若看到就改回 true
+  window_resize:
+    enabled: false
+    duration_ms: 150
+    easing: "cubic_bezier(0.2, 0.0, 0.0, 1.0)"
+    threshold_px: 10
+  # 新窗口出现 —— 关闭
+  window_open:
+    enabled: false
+    duration_ms: 150
+    easing: "cubic_bezier(0.16, 1.0, 0.3, 1.0)"
+    style: "slide_right"
+    opacity_from: 1.0
+  # 切工作区滑动（Feeling 主打的连续动画）；225ms = 官方建议值 450 的一半
+  workspace_switch:
+    enabled: true
+    duration_ms: 225
+    easing: "ease_in_out"
+    style: "slide"
+    direction: "horizontal"
+    iris_origin: "center"
+    opacity_outgoing: 1.0
+    opacity_incoming: 1.0
+    zoom_factor: 0.0
+  # 窗口关闭 —— 关闭
+  window_close:
+    enabled: false
+    duration_ms: 150
+    easing: "ease_in_cubic"
+    style: "none"
+    opacity_to: 0.0
+  # Alt+Shift+M 桌面显隐 —— 关闭
+  desktop_toggle:
+    enabled: false
+    hide_duration_ms: 220
+    show_duration_ms: 260
+    easing: "ease_in_out"
+    hidden_scale: 0.94
+    offset_x: 0
+    offset_y: 24
+    hidden_opacity: 0.0
+
+
 general:
   # YASB 状态栏随 GlazeWM 启动
   startup_commands: ['shell-exec yasb']
@@ -79,13 +130,16 @@ window_behavior:
       shown_on_top: false
 
 workspaces:
-  - name: 'all'
+  # name 决定 yasb 状态栏上 Workspaces 组件的从左到右顺序：yasb 按 name 的自然序排序，
+  # 这里的声明顺序完全不参与，所以用数字当 name、显示名放 display_name。
+  # 改名后 keybindings 里的 focus/move --workspace 参数必须一起改。
+  - name: '1'
     display_name: 'all'
-  - name: 'web'
+  - name: '2'
     display_name: 'web'
-  - name: 'dev'
+  - name: '3'
     display_name: 'dev'
-  - name: 'game'
+  - name: '4'
     display_name: 'game'
 
 window_rules:
@@ -288,23 +342,35 @@ keybindings:
     bindings: ['alt+s']
   - commands: ['focus --prev-active-workspace']
     bindings: ['alt+a']
+  # alt+d 被 fork 的 swap 选择器占用，recent-workspace 挪到 alt+w（与 s/a 同组）
   - commands: ['focus --recent-workspace']
-    bindings: ['alt+d']
-  - commands: ['focus --workspace all']
+    bindings: ['alt+w']
+  - commands: ['focus --workspace 1']
     bindings: ['alt+1']
-  - commands: ['focus --workspace web']
+  - commands: ['focus --workspace 2']
     bindings: ['alt+2']
-  - commands: ['focus --workspace dev']
+  - commands: ['focus --workspace 3']
     bindings: ['alt+3']
-  - commands: ['focus --workspace game']
+  - commands: ['focus --workspace 4']
     bindings: ['alt+4']
 
+  # ---- 窗口交换：Alt-Tab 式选择器（OhMyGlazeWM 内核命令）----
+  # **接管了系统 Alt+Tab**（实测：GlazeWM 的 LL 钩子把 Alt+Tab 完全吞掉，前台不变）。
+  # 按住 alt 连按 tab 在最小化窗口间移动，松开 alt 提交一次原子交换，Esc 取消。
+  # 只占 alt+tab / alt+shift+tab，不设备用键。
+  # 命令来自本 fork，原版 GlazeWM 没有。
+  # 布局默认是网格缩略图；想要「icon + 标题列表 + 右侧大缩略图」加 `--layout list`。
+  - commands: ['swap-switcher']
+    bindings: ['alt+tab']
+  - commands: ['swap-switcher --reverse']
+    bindings: ['alt+shift+tab']
+
   # ---- 窗口移动到 workspace ----
-  - commands: ['move --workspace all', 'focus --workspace all']
+  - commands: ['move --workspace 1', 'focus --workspace 1']
     bindings: ['alt+shift+1']
-  - commands: ['move --workspace web', 'focus --workspace web']
+  - commands: ['move --workspace 2', 'focus --workspace 2']
     bindings: ['alt+shift+2']
-  - commands: ['move --workspace dev', 'focus --workspace dev']
+  - commands: ['move --workspace 3', 'focus --workspace 3']
     bindings: ['alt+shift+3']
-  - commands: ['move --workspace game', 'focus --workspace game']
+  - commands: ['move --workspace 4', 'focus --workspace 4']
     bindings: ['alt+shift+4']
