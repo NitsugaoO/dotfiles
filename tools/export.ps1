@@ -61,6 +61,11 @@ $fromThemes = @(
     @{ S = 'themes\everforest\TackyBorders\config.yaml';             D = 'windows\tacky-borders\config.yaml' }
     @{ S = 'themes\everforest\TackyBorders\README.md';               D = 'windows\tacky-borders\README.md' }
 
+    # 光标：只导出脚本与安装件（*.cur / *.ani 受原包 Agreement 限制不入库）
+    @{ S = 'themes\everforest\Cursors\README.md';                    D = 'windows\cursors\README.md' }
+    @{ S = 'themes\everforest\Cursors\Install.inf';                  D = 'windows\cursors\Install.inf' }
+    @{ S = 'themes\everforest\Cursors\install.ps1';                  D = 'windows\cursors\install.ps1' }
+
     @{ S = 'themes\everforest\Edge\manifest.json';                   D = 'windows\edge\manifest.json' }
     @{ S = 'themes\everforest\Edge\Cached Theme.pak';                D = 'windows\edge\Cached Theme.pak' }
     @{ S = 'themes\everforest\Edge\README.md';                       D = 'windows\edge\README.md' }
