@@ -73,6 +73,9 @@ $fromThemes = @(
     @{ S = 'themes\everforest\Pi\everforest.json';                   D = 'editors\pi\everforest.json' }
     @{ S = 'themes\everforest\Pi\README.md';                         D = 'editors\pi\README.md' }
 
+    @{ S = 'themes\everforest\Zed\everforest-hard-dark.json';         D = 'editors\zed\everforest-hard-dark.json' }
+    @{ S = 'themes\everforest\Zed\README.md';                        D = 'editors\zed\README.md' }
+
     @{ S = 'themes\everforest\ClashParty\everforest.css';            D = 'apps\clash-party\everforest.css' }
     @{ S = 'themes\everforest\ClashParty\README.md';                 D = 'apps\clash-party\README.md' }
 
