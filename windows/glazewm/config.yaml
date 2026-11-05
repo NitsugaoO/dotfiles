@@ -280,21 +280,25 @@ binding_modes:
         bindings: ['escape', 'enter']
 
 keybindings:
-  # ---- 焦点移动(HJKL / 方向键)----
+  # ---- 焦点移动(纯 HJKL)----
+  # 不绑 alt+方向键 / alt+shift+方向键：GlazeWM 走全局键盘钩子，匹配到就吞键，
+  # 没有「程序没处理才轮到 WM」的 fallback，所以只能解绑，把这几组键还给程序
+  # （浏览器 alt+←/→ 前进后退、编辑器按词移动等）。resize 模式里的裸方向键
+  # 只在 Alt+R 激活时生效，不占组合键，保留。
   - commands: ['focus --direction left']
-    bindings: ['alt+h', 'alt+left']
+    bindings: ['alt+h']
   - commands: ['focus --direction right']
-    bindings: ['alt+l', 'alt+right']
+    bindings: ['alt+l']
   - commands: ['focus --direction up']
     bindings: ['alt+k']
   - commands: ['focus --direction down']
     bindings: ['alt+j']
 
-  # ---- 窗口移动 ----
+  # ---- 窗口移动(纯 HJKL)----
   - commands: ['move --direction left']
-    bindings: ['alt+shift+h', 'alt+shift+left']
+    bindings: ['alt+shift+h']
   - commands: ['move --direction right']
-    bindings: ['alt+shift+l', 'alt+shift+right']
+    bindings: ['alt+shift+l']
   - commands: ['move --direction up']
     bindings: ['alt+shift+k']
   - commands: ['move --direction down']
@@ -347,10 +351,14 @@ keybindings:
     bindings: ['alt+enter']
 
   # ---- workspace 切换 ----
+  # win+←/→ 接管原生 Aero Snap：原生 WM 已关，这两个组合本来无用，改成左右切
+  # workspace（--next/--prev-active 会跳过没有窗口的 workspace，与 alt+s/a 同语义）。
+  # 钩子只吞 right/left、不吞 LWin 本身，存在「被系统判成单击 Win 弹开始菜单」的
+  # 理论风险；2026-11-05 实测：切工作区正常、无开始菜单弹出，故保留这两条。
   - commands: ['focus --next-active-workspace']
-    bindings: ['alt+s']
+    bindings: ['alt+s', 'win+right']
   - commands: ['focus --prev-active-workspace']
-    bindings: ['alt+a']
+    bindings: ['alt+a', 'win+left']
   # alt+d 被 fork 的 swap 选择器占用，recent-workspace 挪到 alt+w（与 s/a 同组）
   - commands: ['focus --recent-workspace']
     bindings: ['alt+w']
