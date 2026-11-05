@@ -42,7 +42,7 @@ animations:
     easing: "ease_in_cubic"
     style: "none"
     opacity_to: 0.0
-  # Alt+Shift+M 桌面显隐 —— 关闭
+  # 桌面显隐（键位 alt+shift+m 见 keybindings）—— 动画关闭
   desktop_toggle:
     enabled: false
     hide_duration_ms: 220
@@ -87,6 +87,11 @@ gaps:
     left: '8px'
 
 window_effects:
+  # 焦点描边:Feeling 自绘的点击穿透描边,单位=物理像素。
+  # 0/1 = 只用系统原生细边框(当前观感);>1 才会额外叠一层自绘描边
+  focused_border_width: 0
+  # 进入 resize 模式(alt+r)时把描边加粗到这个宽度,退出立即恢复
+  resize_border_width: 6
   # 聚焦窗口:Everforest 鼠尾草绿边框
   focused_window:
     border:
@@ -318,6 +323,10 @@ keybindings:
     bindings: ['alt+f']
   - commands: ['toggle-minimized']              # 最小化
     bindings: ['alt+m']
+  # 显示桌面 / 还原：cloak 隐藏当前 workspace 的可见窗口，不动窗口树、不改原生位置。
+  # 命令来自本 fork（Feeling 基线自带），原版 GlazeWM 没有。
+  - commands: ['wm-toggle-desktop']
+    bindings: ['alt+shift+m']
   - commands: ['toggle-tiling-direction']       # 切换平铺方向
     bindings: ['alt+shift+v']
   - commands: ['wm-cycle-focus']                # 平铺→浮动→全屏循环
@@ -365,6 +374,15 @@ keybindings:
   - commands: ['swap-switcher --reverse']
     bindings: ['alt+shift+tab']
 
+  # ---- 把最小化窗口叫到前台（同一个选择器，不交换）----
+  # commit 时只做 restore + 聚焦：当前窗口原地不动，被叫出来的窗口按
+  # alt+t 同款规则入树（有有效原位就回原位，否则靠当前聚焦平铺窗口）。
+  # 按住 alt+ctrl 连按 tab 选，松 alt 提交，Esc 取消。
+  - commands: ['swap-switcher --bring-to-front']
+    bindings: ['alt+ctrl+tab']
+  - commands: ['swap-switcher --bring-to-front --reverse']
+    bindings: ['alt+ctrl+shift+tab']
+
   # ---- 窗口移动到 workspace ----
   - commands: ['move --workspace 1', 'focus --workspace 1']
     bindings: ['alt+shift+1']
@@ -374,3 +392,16 @@ keybindings:
     bindings: ['alt+shift+3']
   - commands: ['move --workspace 4', 'focus --workspace 4']
     bindings: ['alt+shift+4']
+
+  # ---- 窗口移动到 workspace,但人留在当前 workspace ----
+  # 只有 move,不带 focus。窗口移过去会立刻被 cloak,屏幕上看不到反馈,
+  # 用 alt+数字 切过去才能确认(状态栏该 workspace 的窗口数会 +1)。
+  # 目标就是当前 workspace 时是 no-op。
+  - commands: ['move --workspace 1']
+    bindings: ['alt+ctrl+1']
+  - commands: ['move --workspace 2']
+    bindings: ['alt+ctrl+2']
+  - commands: ['move --workspace 3']
+    bindings: ['alt+ctrl+3']
+  - commands: ['move --workspace 4']
+    bindings: ['alt+ctrl+4']

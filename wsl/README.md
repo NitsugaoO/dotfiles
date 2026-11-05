@@ -7,7 +7,7 @@
 | [`bin/ida`](./bin/ida) | 在 WSL 终端里用 **Windows 版 IDA** 打开文件 |
 | [`bin/here`](./bin/here) | 在 **Windows 资源管理器**里打开 WSL 的当前目录 |
 | [`gdb/`](./gdb) | pwndbg context 分屏：把栈/寄存器/反汇编输出分流到侧边 pane |
-| [`tmux/`](./tmux) | tmux 配置（`mouse on` 等） |
+| [`tmux/`](./tmux) | tmux 配置（dojo 与 WSL 共用同一份） |
 
 ## 部署
 
@@ -65,8 +65,19 @@ WT 的 `wt.exe -w <窗口>` 得先能确定"当前窗口"。从 WSL 里调用时
 
 ## tmux
 
-[`tmux/tmux.conf`](./tmux/tmux.conf) → `~/.tmux.conf`：`mouse on`（在 WT 里滚轮翻历史、
-拖拽 pane 边框）+ 加大 `history-limit`。
+[`tmux/tmux.conf`](./tmux/tmux.conf) → `~/.tmux.conf`：与 dojo 侧**共用同一份内容**
+（dojo 的源在 `my_pwn/env/tmux.conf`），改任一处都要同步另一处。
+
+| 配置 | 作用 |
+| --- | --- |
+| `mouse on` | WT 里滚轮翻历史（自动进 copy-mode）、点选 pane、拖边框改大小 |
+| `escape-time 10` | vim 里 Esc 不再卡 500ms |
+| `history-limit 50000` | 默认 2000 行，gdb / disasm 一刷就没 |
+| `base-index 1` / `pane-base-index 1` | 窗口 / 窗格从 1 编号 |
+| `bind \|` / `bind -` | 左右 / 上下分屏，新 pane 继承当前目录（需 tmux >= 3.0） |
+| `set-clipboard on` | OSC52 写系统剪贴板（WT 支持；不生效就注释掉） |
+
+⚠️ `base-index` / `pane-base-index` 只影响**新建的 session**，已存在的 session 里旧编号不追溯。
 
 ## ida
 
