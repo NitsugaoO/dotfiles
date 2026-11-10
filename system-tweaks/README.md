@@ -25,7 +25,14 @@
 ├── context-menu/                    ← 资源管理器右键菜单
 │   ├── README.md
 │   ├── Run-Pi-Here.reg              ← 注册表导入文件（UTF-16LE）
-│   └── run-pi-here.ico
+│   ├── run-pi-here.ico
+│   └── new-file-items/              ← 「新建」子菜单：加 md/c/cpp/py，去 BMP/Excel/PPT
+│       ├── README.md
+│       ├── add-new-file-items.ps1       ← 一键应用（加 4 项 + 去 BMP）
+│       ├── remove-new-file-items.ps1    ← 一键撤销
+│       ├── remove-office-new-items.ps1  ← 去 Excel/PPT（需管理员）
+│       ├── dump-new-menu.ps1            ← 诊断：不开界面直接读菜单内容
+│       └── backup-office-shellnew/      ← 删除前的 ShellNew 原键（.reg 可恢复）
 └── tweaks/
     ├── py-rightclick-run/           ← .py 右键「用 Python 运行」
     │   └── README.md
@@ -54,6 +61,7 @@
 | 项目 | 状态 | 实现方式 | 文档 |
 |---|---|---|---|
 | 资源管理器右键「Run Pi Here」 | ✅ 生效中 | HKCU 注册表（`.reg` 导入）+ Windows Terminal | [`context-menu/README.md`](context-menu/README.md) |
+| 右键「新建」加 md/c/cpp/py、去 BMP/Excel/PPT | ✅ 生效中 | 扩展名层 `ShellNew`（需有 ProgID 关联）+ MrtCache 清名；Excel/PPT 删 HKLM `ShellNew` | [`context-menu/new-file-items/`](context-menu/new-file-items/README.md) |
 | .py 右键「用 Python 运行」 | ✅ 生效中 | HKCU 注册表 + scoop python | [`tweaks/py-rightclick-run/`](tweaks/py-rightclick-run/README.md) |
 | 开始菜单「所有应用」加入 Pi | ✅ 生效中 | 用户开始菜单 `Programs` 下的 `.lnk`（脚本生成） | [`tweaks/start-menu-pi/`](tweaks/start-menu-pi/README.md) |
 | 双击桌面切换图标显示/隐藏 | ✅ 生效中 | Windhawk mod（非 AHK） | [`tweaks/desktop-icons-toggle/`](tweaks/desktop-icons-toggle/README.md) |
@@ -84,6 +92,9 @@
 | **开始菜单里新建的快捷方式不出现** | 开始菜单有缓存（几秒~几十秒） | 稍等，或重启 `explorer.exe` / 注销重登；不要靠「改注册表」硬刷 |
 | **想脚本化把程序固定到开始屏幕** | 固定区是 `start.bin` **二进制私有格式**，无官方接口 | 只能**手动**右键 → 固定；脚本化能做的只是让它出现在「所有应用」 |
 | **不确定某个 tweak 到底生效没** | 只看了「配置存在」 | 用文档里的**验证方法**做端到端测试（杀进程重来 / 查实际值） |
+| **加了 `ShellNew` 但「新建」菜单没反应** | ① 挂错层：必须在 `HKCR\.<ext>\ShellNew`，写在 `HKCR\<ProgID>\ShellNew`（扩展名键外面）无效；② 该扩展名没有可用默认 ProgID（无 `shell\open\command`），`ShellNew` 被静默忽略 | 先给扩展名关联真实程序，再把 `ShellNew` 挂到扩展名键下；详见 [`context-menu/new-file-items/README.md`](context-menu/new-file-items/README.md) |
+| **注册表里怎么都搜不到某项，菜单里却有**（如「BMP 图像」「文本文档」） | 来自 Store 应用（画图 / 记事本）的资源名，缓存在 `HKCU\...\Local Settings\MrtCache\<pkg>.pri\...`，值名形如 `@{...ms-resource://.../ShellNewDisplayName_Bmp}` | 清空该值的**数据**；键路径 >260 字符，必须逐级 `OpenSubKey` |
+| **32 位进程里查注册表，`.txt`/`.bmp` 的键「不存在」** | 32 位进程看到的 `HKCR` 是 Wow6432Node 合并视图 | 用 64 位 PowerShell 或 `.NET` 的 `Registry.ClassesRoot` |
 
 ## 通用原则
 

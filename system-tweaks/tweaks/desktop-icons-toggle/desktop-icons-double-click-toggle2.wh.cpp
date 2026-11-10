@@ -2,7 +2,7 @@
 // @id              desktop-icons-double-click-toggle2
 // @name            Desktop Icons Double-Click Toggle
 // @description     Toggle desktop icons by double-clicking an empty area of the desktop.
-// @version         1.3
+// @version         1.4
 // @author          akumy
 // @github          https://github.com/Akumy-01
 // @include         explorer.exe
@@ -194,17 +194,29 @@ static void RedrawDesktopLocked() {
     }
 }
 
-static void SetDesktopIconsVisibleLocked(bool visible) {
+static bool IsDesktopLabelEditingLocked();
+
+// 返回 true 表示已执行；false 表示被「正在重命名」保护拦下。
+// protectEditing=false 只给卸载时的状态恢复用：那时没有用户编辑可言，
+// 而且必须尽力把图标可见性还原回去。
+static bool SetDesktopIconsVisibleLocked(bool visible,
+                                         bool protectEditing = true) {
+    // 重命名期间对 SysListView32 做 ShowWindow 会销毁就地编辑框
+    // （实测事件序列 HIDE -> DESTROY），所以把保护下沉到这一个出入口，
+    // 让 startup hide / 双击 toggle / 卸载恢复三条路径都受同一份保护。
+    if (protectEditing && IsDesktopLabelEditingLocked()) {
+        return false;
+    }
+
     if (!RefreshDesktopWindowsLocked()) {
-        return;
+        return false;
     }
 
     ShowWindow(g_listView, visible ? SW_SHOW : SW_HIDE);
     g_modifiedVisibility = true;
     RedrawDesktopLocked();
+    return true;
 }
-
-static bool IsDesktopLabelEditingLocked();
 
 static void ToggleDesktopIconsLocked() {
     // 重命名期间不切换图标，防止重命名被取消
@@ -217,8 +229,9 @@ static void ToggleDesktopIconsLocked() {
     }
 
     bool iconsVisible = IsWindowVisible(g_listView) != FALSE;
-    SetDesktopIconsVisibleLocked(!iconsVisible);
-    Wh_Log(L"Desktop icons %s", iconsVisible ? L"hidden" : L"shown");
+    if (SetDesktopIconsVisibleLocked(!iconsVisible)) {
+        Wh_Log(L"Desktop icons %s", iconsVisible ? L"hidden" : L"shown");
+    }
 }
 
 static bool IsSecondClickLocked(POINT pt) {
@@ -398,11 +411,15 @@ static DWORD WINAPI WorkerThreadProc(LPVOID) {
 
         // 桌面窗口就绪后隐藏一次图标（登录 / Explorer 重启时生效）
         if (g_startupHidePending && RefreshDesktopWindowsLocked()) {
-            g_startupHidePending = false;
-            if (IsWindowVisible(g_listView)) {
-                SetDesktopIconsVisibleLocked(false);
+            if (!IsWindowVisible(g_listView)) {
+                // 已经隐藏了，没什么可做
+                g_startupHidePending = false;
+            } else if (SetDesktopIconsVisibleLocked(false)) {
+                g_startupHidePending = false;
                 Wh_Log(L"Desktop icons hidden on startup");
             }
+            // 被重命名保护拦下时保留 pending，1 秒后重试，
+            // 避免「开机时正好在重命名」导致自动隐藏永久失效。
         }
 
         LeaveCriticalSection(&g_lock);
@@ -466,7 +483,8 @@ void Wh_ModUninit() {
 
     if (g_settings.restoreInitialStateOnUnload && g_modifiedVisibility &&
         g_haveInitialVisibility) {
-        SetDesktopIconsVisibleLocked(g_initialIconsVisible);
+        SetDesktopIconsVisibleLocked(g_initialIconsVisible,
+                                    /* protectEditing = */ false);
     }
 
     LeaveCriticalSection(&g_lock);

@@ -3,6 +3,9 @@
 > 在**文件夹**、**驱动器**、**文件夹空白处**的右键菜单加入「Run Pi Here」，
 > 点击后在该目录用 Windows Terminal 打开 pwsh 并启动 `pi`。
 
+> 📁 同目录下还有「新建」子菜单定制（加 Markdown/C/C++/Python，去掉 BMP/Excel/PPT）：
+> [`new-file-items/README.md`](new-file-items/README.md)
+
 ## 来源
 
 - 归档日期：2026-09
