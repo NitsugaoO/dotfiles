@@ -165,7 +165,14 @@ window_rules:
       - window_process: { equals: 'tupa-launcher' }
         window_class: { equals: 'TupaLauncherWindow' }
 
-  # 2) 旧版 TUI 面板（Windows Terminal 里的标签页）
+  # 2) TUI 面板跑在 WezTerm 里：类名由启动参数 `--class tupa-launcher` 指定，全机唯一，
+  #    所以**只按类名匹配**就够。WezTerm 的窗口标题会跟着前台进程变（实测跑 ping 时
+  #    标题变成 "PING.EXE"），用标题匹配反而会漏。
+  - commands: ['set-floating', 'size --width 62% --height 55%', 'position --centered']
+    match:
+      - window_class: { equals: 'tupa-launcher' }
+
+  # 3) 兜底：TUI 面板跑在 Windows Terminal 里（找不到 wezterm-gui 时）
   # 窗口类是 Windows Terminal 的，再用标题前缀锁定面板，避免影响普通终端窗口。
   # 只认 "tupa-launcher" 本身或带 " - " / ": " 后缀的标题；pi 在项目目录里工作时
   # 标题是 "π - tupa-launcher"，不能误判。
@@ -215,10 +222,17 @@ window_rules:
     match:
       - window_process: { equals: 'HiBitUninstaller-Portable' }
 
-  # 文件资源管理器自动浮动(居中显示)
+  # 文件资源管理器自动浮动 + 固定尺寸居中
   # 必须带 window_class 限定:explorer.exe 还持有桌面(Progman/WorkerW)、
   # 任务栏(Shell_TrayWnd)、托盘等 shell 窗口,只按进程名匹配会连它们一起命中。
-  - commands: ['set-floating']
+  #
+  # 为什么要显式 size/position:只 set-floating 时 GlazeWM 完全不碰尺寸,
+  # 窗口宽高和位置就沿用 Windows 自己的记忆(Shell\Bags / 上次关闭状态),
+  # 而 Win+E / 右键文件夹 / 任务栏 / 已有窗口 Ctrl+N 各入口记的东西不保证一致,
+  # 观感上就是「每次打开大小、位置都变」。
+  # 顺序同 tupa-launcher:size 会改变窗口尺寸,必须放在 position --centered 之前,
+  # 否则居中按「改尺寸前」的大小算,会偏。
+  - commands: ['set-floating', 'size --width 62% --height 70%', 'position --centered']
     match:
       - window_process: { equals: 'explorer' }
         window_class: { regex: 'CabinetWClass|ExploreWClass' }
