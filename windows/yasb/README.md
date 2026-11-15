@@ -185,3 +185,8 @@ Select-String -Path "$env:APPDATA\obs-studio\logs\*.txt" -Pattern 'obs-websocket
 所以右键不再区分 profile，一律打开 `素材` 这一层。
 右键停止后会等 1.5s 让 OBS 写完 moov，然后**递归**子目录找最新的 mp4，用 `explorer /select`
 高亮选中。`RecFilePath` 只在 `RECORD_ROOT` 不存在时作为回退（路径里的双反斜杠会先归正）。
+
+OBS 本体是**官方安装版**（winget `OBSProject.OBSStudio`，33.0.0），配置在
+`%APPDATA%\obs-studio`。**不要换回 Scoop 版** —— 那份带 `portable_mode.txt`，跑便携模式，
+配置落在 `scoop\apps\obs-studio\current\config\obs-studio`，而 `current` 是指向版本目录的
+符号链接（如 `33.0.1`），`scoop update` 后配置就不跟过去了。
