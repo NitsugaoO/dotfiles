@@ -180,5 +180,8 @@ Select-String -Path "$env:APPDATA\obs-studio\logs\*.txt" -Pattern 'obs-websocket
 ### 也可以手动点
 
 组件虽然小，但行为是完整的：**左键 = 开始/暂停，右键 = 停止并跳转到录像**。
-录像目录从 OBS 配置的 `RecFilePath` 读取（当前是 `D:\Videos`），
-右键停止后会等 1.5s 让 OBS 写完 moov，再用 `explorer /select` 高亮选中刚录的文件。
+录像目录**固定为 `D:/Videos/素材`**（脚本里的 `RECORD_ROOT`）：OBS 两个 profile 的
+`RecFilePath` 分别指向它的子目录（Cato → `素材/CATO`、Celeste → `素材/Celeste`），
+所以右键不再区分 profile，一律打开 `素材` 这一层。
+右键停止后会等 1.5s 让 OBS 写完 moov，然后**递归**子目录找最新的 mp4，用 `explorer /select`
+高亮选中。`RecFilePath` 只在 `RECORD_ROOT` 不存在时作为回退（路径里的双反斜杠会先归正）。
