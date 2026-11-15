@@ -147,9 +147,47 @@ Windhawk UI 的编译逻辑藏在
 2. 用上面的 clang 参数编译，DLL 落到 `Engine\Mods\64\local@desktop-icons-double-click-toggle2_1.4_<seq>.dll`；
 3. 源码同步到 `ModsSource\` 与 `EditorWorkspace\`；
 4. 写注册表 `LibraryFileName` / `Version`（Windhawk 靠这两个字段找 DLL）；
+   ⚠️ **不写 `Settings` 子键** —— Windhawk 重装后会丢设置，见下一节；
 5. 加 `-RestartService` 可重启 Windhawk 服务；不加则需在 Windhawk UI 里把该 mod 关开一次。
 
 > 部署脚本必须 **UTF-8 with BOM**（同 `sync-dotfiles.ps1`，PS 5.1 否则按 GBK 解析中文报语法错）。
+
+## Windhawk 重装后「开机不自动隐藏」（2026-11-12 事故与恢复）
+
+**现象**：重装 Windhawk 后开机图标一直显示，双击桌面空白切换仍正常。
+
+**原因**：重装时引擎重建 `C:\ProgramData\Windhawk\Engine`，并清空
+`HKLM\SOFTWARE\Windhawk\Engine\Mods` 整棵树。市场 mod 会由 Windhawk 安装流程写回 `Settings`
+子键，但本 mod 是 `local@` 手工部署的，`deploy-v1.4.ps1` 只写 `LibraryFileName` / `Version` /
+`SettingsChangeTime`，**不写 `Settings`** → 设置值全缺。`LoadSettings()` 里
+`Wh_GetIntSetting(L"HideIconsOnStartup") != 0` 在值缺失时读到 0，`g_startupHidePending` 为
+false，开机隐藏那支永远不执行（schema 注释里的 `true` 只用于 UI 显示，引擎不认）。
+`RestoreInitialStateOnUnload` 同样变 0。
+
+源码与 DLL 本身没问题：Windhawk 重编出的
+`local@desktop-icons-double-click-toggle2_1.4_747728.dll`（源码仍是 `ModsSource` 里那份 14999 字节
+v1.4）逻辑等价，**不需要重编译**，只需补设置。
+
+**恢复（管理员 PowerShell，一次写入）**：
+
+```powershell
+$k = 'HKLM:\SOFTWARE\Windhawk\Engine\Mods\local@desktop-icons-double-click-toggle2'
+New-Item "$k\Settings" -Force | Out-Null
+Set-ItemProperty "$k\Settings" HideIconsOnStartup           1 -Type DWord
+Set-ItemProperty "$k\Settings" RestoreInitialStateOnUnload  1 -Type DWord
+Set-ItemProperty "$k\Settings" DoubleClickTimeMs            0 -Type DWord
+Set-ItemProperty "$k\Settings" DoubleClickDistancePx        0 -Type DWord
+Set-ItemProperty $k SettingsChangeTime ([int][double]::Parse((Get-Date -UFormat %s))) -Type DWord
+```
+
+然后在 Windhawk UI 里把 mod 关开一次（或直接重启 explorer）让 `LoadSettings()` 重跑。
+
+**验证**：写值前先让图标处于**显示**状态，重启 explorer 后几秒内 `SysListView32` 应变为不可见
+（`Progman → SHELLDLL_DefView → SysListView32`，`IsWindowVisible` 为 `False`）。
+注意 PowerShell 把 `$null` 传给 `FindWindowW` / `FindWindowExW` 的窗口名参数时要用
+`[NullString]::Value`，否则会被当成空字符串，函数一律返回 0。
+
+**别做的事**：不要为此重跑 `deploy-v1.4.bat` 或重新编译 —— 问题在注册表设置，不在 DLL。
 
 ## 文件清单
 
